@@ -23,9 +23,11 @@ router.get('/', async function (ctx) {
     await ctx.render('landing', { motd: landingCtx.getMotd() })
 })
 
+const port = process.env.PORT || 8081
+
 app
     .use( router.routes())
     .use(router.allowedMethods())
-    .listen(3000, () => {
-        console.log('Listening...')
+    .listen(port, () => {
+        console.log(`Listening on ${port}...`)
     })
