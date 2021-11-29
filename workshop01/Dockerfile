@@ -22,6 +22,8 @@ ENV PORT=3000
 
 WORKDIR ${APP_DIR}
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD curl http://localhost:${PORT}/healthz || exit 1
+
 # what are the required ports
 EXPOSE ${PORT}
 

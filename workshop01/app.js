@@ -19,6 +19,10 @@ app
         }
     }))
 
+router.get('/healthz', async function (ctx) {
+    await ctx.render('landing', { motd: landingCtx.getMotd() })
+})
+
 router.get('/', async function (ctx) {
     await ctx.render('landing', { motd: landingCtx.getMotd() })
 })
