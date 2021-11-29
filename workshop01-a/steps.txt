@@ -1,0 +1,16 @@
+Steps
+
+# Create Network
+docker network create workshop01-network
+
+# Create Volume
+docker volume create workshop01-volume
+
+# Run the DB container
+docker run -d -v workshop01-volume:/var/lib/mysql --name workshop01-db --network workshop01-network stackupiss/northwind-db:v1
+
+# Run the APP container on port 3000
+docker run -d -p 3000:3000 -e INSTANCE_IP_ADDRESS ???? -e DB_HOST=workshop01-db -e DB_USER=root -e DB_PASSWORD=changeit --name workshop01-app --network workshop01-network stackupiss/northwind-app:v1
+
+# Run the APP v2 container on port 3001
+docker run -d -p 3000:3000 -e INSTANCE_IP_ADDRESS ???? -e DB_HOST=workshop01-db -e DB_USER=root -e DB_PASSWORD=changeit --name workshop01-app --network workshop01-network stackupiss/northwind-app:v1
