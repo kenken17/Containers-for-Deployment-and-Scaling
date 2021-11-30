@@ -1,10 +1,10 @@
-# Containerize 
+# Containerize
 
-``js`
+``js
 docker build -t myapp:v1 .
 ``
 
-``js`
+``js
 docker run -d -p 8080:3000 -e PORT=3000 --name myapp myapp:v1
 ``
 
