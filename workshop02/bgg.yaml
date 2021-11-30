@@ -1,0 +1,73 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bggdb-deploy
+  labels:
+    name: bggdb-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: bggdb-pod
+  template:
+    metadata:
+      name: bggdb-pod
+      labels:
+        name: bggdb-pod
+    spec:
+      containers:
+      - name: bggdb-container
+        image: stackupiss/bgg-database:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: bggdb-port
+          containerPort: 3306
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bggapp-deploy
+  labels:
+    name: bggapp-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: bggapp-pod
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      name: bggapp-pod
+      labels:
+        name: bggapp-pod
+    spec:
+      containers:
+        - name: bggapp-container
+          image: stackupiss/bgg-backend:v2
+          imagePullPolicy: IfNotPresent
+          envFrom: 
+          - configMapRef:
+              name: bgg-config
+          - secretRef:
+              name: bgg-secret
+          ports:
+          - name: bggapp-port
+            containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          readinessProbe:  
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 30
