@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nwdb-deploy
+  labels:
+    name: nwdb-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: nwdb-pod
+  template:
+    metadata:
+      name: nwdb-pod
+      labels:
+        name: nwdb-pod
+    spec:
+      volumes:
+      - name: nwdb-vol
+        persistentVolumeClaim:
+          claimName: nwdb-pvc
+      containers:
+      - name: nwdb-container
+        image: stackupiss/bgg-database:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: nwdb-port
+          containerPort: 3306
+        volumeMounts:
+        - name: nwdb-vol
+          mountPath: /var/lib/mysql
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nwdb-svc
+  labels:
+    name: nwdb-svc
+spec:
+  type: ClusterIP
+  selector:
+    name: nwdb-pod
+  ports:
+    - port: 3306
+      targetPort: nwdb-port
+
