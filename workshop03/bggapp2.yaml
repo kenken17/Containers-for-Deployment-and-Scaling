@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bggapp2-deploy
+  labels:
+    name: bggapp2-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: bggapp2-pod
+  template:
+    metadata:
+      name: bggapp2-pod
+      labels:
+        name: bggapp2-pod
+    spec:
+      containers:
+        - name: bggapp2-container
+          image: stackupiss/bgg-backend:v2
+          imagePullPolicy: IfNotPresent
+          args:
+          - --prefix=/v2
+          envFrom: 
+          - configMapRef:
+              name: bgg-config
+          - secretRef:
+              name: bgg-secret
+          ports:
+          - name: bggapp2-port
+            containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bggapp2-svc
+  labels:
+    name: bggapp2-svc
+spec:
+  type: ClusterIP
+  selector:
+    name: bggapp2-pod
+  ports:
+    - port: 3000
+      targetPort: bggapp2-port
